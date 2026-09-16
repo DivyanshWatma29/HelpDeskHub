@@ -17,6 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -46,14 +48,16 @@ public class SecurityConfig {
     UserDetailsService userDetailsService(
             @Value("${app.admin.username:admin}") String adminUsername,
             @Value("${app.admin.password:ChangeMe123!}") String adminPassword,
+            @Value("${app.agent.username:agent}") String agentUsername,
+            @Value("${app.agent.password:Agent123!}") String agentPassword,
             PasswordEncoder passwordEncoder) {
         return new InMemoryUserDetailsManager(
                 User.withUsername(adminUsername)
                         .password(passwordEncoder.encode(adminPassword))
                         .roles("ADMIN")
                         .build(),
-                User.withUsername("agent")
-                        .password(passwordEncoder.encode("Agent123!"))
+                User.withUsername(agentUsername)
+                        .password(passwordEncoder.encode(agentPassword))
                         .roles("AGENT")
                         .build()
         );
@@ -65,20 +69,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource(
+            @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173,https://*.onrender.com,https://*.vercel.app}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of(
-                "https://*.onrender.com",
-                "https://*.vercel.app",
-                "http://localhost:*",
-                "http://127.0.0.1:*",
-                "*"
-        ));
+        configuration.setAllowedOriginPatterns(Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toList());
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(List.of("Content-Type"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
