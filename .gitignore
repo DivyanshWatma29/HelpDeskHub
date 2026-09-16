@@ -1,0 +1,12 @@
+# Java / Maven
+backend/target/
+
+# React / Vite
+frontend/node_modules/
+frontend/dist/
+
+# Local configuration and editor files
+.env
+.idea/
+.vscode/
+*.iml
