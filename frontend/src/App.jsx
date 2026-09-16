@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   checkAuth,
+  checkHealth,
   createTicket,
   deleteTicket,
   getDashboardSummary,
@@ -624,6 +625,26 @@ export default function App() {
   const [departments, setDepartments] = useState(DEFAULT_DEPARTMENTS);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [authUser, setAuthUser] = useState(null);
+  const [apiStatus, setApiStatus] = useState("connecting");
+
+  useEffect(() => {
+    let isMounted = true;
+    function ping() {
+      checkHealth()
+        .then(() => {
+          if (isMounted) setApiStatus("connected");
+        })
+        .catch(() => {
+          if (isMounted) setApiStatus("offline");
+        });
+    }
+    ping();
+    const interval = setInterval(ping, 20000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     getDepartments()
@@ -682,6 +703,15 @@ export default function App() {
         </nav>
 
         <div className="topbar-actions">
+          <div className="connection-badge" title="Live connection to Spring Boot backend & relational database">
+            <span className={`status-dot ${apiStatus}`} />
+            <span>
+              {apiStatus === "connected" && "System Online"}
+              {apiStatus === "connecting" && "Connecting..."}
+              {apiStatus === "offline" && "Reconnecting..."}
+            </span>
+          </div>
+
           {authUser ? (
             <div className="auth-status">
               <span className="user-name">{authUser.username}</span>

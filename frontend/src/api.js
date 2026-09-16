@@ -60,6 +60,10 @@ async function request(path, options = {}, credentials) {
   return data;
 }
 
+export function checkHealth() {
+  return request("/health");
+}
+
 export function checkAuth(credentials) {
   return request("/auth/me", {}, credentials);
 }
