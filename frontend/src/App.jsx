@@ -14,6 +14,14 @@ import {
 const priorities = ["LOW", "MEDIUM", "HIGH"];
 const statuses = ["OPEN", "IN_PROGRESS", "RESOLVED"];
 
+const DEFAULT_DEPARTMENTS = [
+  { id: 1, name: "IT Operations & Infrastructure", code: "IT-OPS" },
+  { id: 2, name: "HR Operations", code: "HR-OPS" },
+  { id: 3, name: "Finance IT Systems", code: "FIN-IT" },
+  { id: 4, name: "Facilities Management", code: "FAC-MGT" },
+  { id: 5, name: "Access & Information Security", code: "SEC-OPS" }
+];
+
 function readable(value) {
   if (!value) return "";
   return value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -24,11 +32,12 @@ function formatDate(value) {
   return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 }
 
-function TicketForm({ departments }) {
+function TicketForm({ departments = DEFAULT_DEPARTMENTS }) {
+  const depts = departments && departments.length > 0 ? departments : DEFAULT_DEPARTMENTS;
   const [ticket, setTicket] = useState({
     requesterName: "",
     requesterEmail: "",
-    departmentId: departments[0]?.id || "",
+    departmentId: depts[0]?.id || 1,
     title: "",
     description: "",
     priority: "MEDIUM"
@@ -38,10 +47,10 @@ function TicketForm({ departments }) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (departments.length > 0 && !ticket.departmentId) {
-      setTicket((prev) => ({ ...prev, departmentId: departments[0].id }));
+    if (depts.length > 0 && !ticket.departmentId) {
+      setTicket((prev) => ({ ...prev, departmentId: depts[0].id }));
     }
-  }, [departments]);
+  }, [depts]);
 
   function changeField(event) {
     setTicket({ ...ticket, [event.target.name]: event.target.value });
@@ -62,7 +71,7 @@ function TicketForm({ departments }) {
       setTicket({
         requesterName: "",
         requesterEmail: "",
-        departmentId: departments[0]?.id || "",
+        departmentId: depts[0]?.id || 1,
         title: "",
         description: "",
         priority: "MEDIUM"
@@ -120,7 +129,7 @@ function TicketForm({ departments }) {
           <label>
             Assigned Department
             <select name="departmentId" value={ticket.departmentId} onChange={changeField} required>
-              {departments.map((dept) => (
+              {depts.map((dept) => (
                 <option key={dept.id} value={dept.id}>
                   {dept.name} ({dept.code})
                 </option>
@@ -357,7 +366,8 @@ function LoginModal({ onClose, onLoginSuccess }) {
   );
 }
 
-function DashboardView({ departments, authUser, onSignOut }) {
+function DashboardView({ departments = DEFAULT_DEPARTMENTS, authUser, onSignOut }) {
+  const depts = departments && departments.length > 0 ? departments : DEFAULT_DEPARTMENTS;
   const credentials = authUser.credentials;
   const [tickets, setTickets] = useState([]);
   const [summary, setSummary] = useState(null);
@@ -389,27 +399,29 @@ function DashboardView({ departments, authUser, onSignOut }) {
   }
 
   useEffect(() => {
-    loadData();
-  }, []);
+    loadData(filters);
+  }, [filters]);
 
-  function updateFilter(field, value) {
-    const nextFilters = { ...filters, [field]: value };
-    setFilters(nextFilters);
-    loadData(nextFilters);
+  function updateFilter(key, value) {
+    setFilters((prev) => ({ ...prev, [key]: value }));
   }
 
   function changeDraft(ticket, field, value) {
-    const current = drafts[ticket.id] ?? { status: ticket.status, adminNote: ticket.adminNote ?? "" };
-    setDrafts({ ...drafts, [ticket.id]: { ...current, [field]: value } });
+    setDrafts((prev) => ({
+      ...prev,
+      [ticket.id]: {
+        status: field === "status" ? value : (prev[ticket.id]?.status ?? ticket.status),
+        adminNote: field === "adminNote" ? value : (prev[ticket.id]?.adminNote ?? ticket.adminNote ?? "")
+      }
+    }));
   }
 
   async function saveTicket(ticket) {
-    const update = drafts[ticket.id] ?? { status: ticket.status, adminNote: ticket.adminNote ?? "" };
-    setSuccessMsg("");
-    setError("");
+    const draft = drafts[ticket.id];
+    if (!draft) return;
     try {
-      await updateTicket(ticket.id, update, credentials);
-      setSuccessMsg(`Ticket ${ticket.ticketNumber} updated successfully!`);
+      await updateTicket(ticket.id, draft, credentials);
+      setSuccessMsg(`Ticket ${ticket.ticketNumber} updated successfully.`);
       await loadData();
     } catch (requestError) {
       setError(requestError.message);
@@ -435,8 +447,8 @@ function DashboardView({ departments, authUser, onSignOut }) {
     try {
       const detail = await getTicketDetails(ticketId, credentials);
       setActiveTimeline(detail);
-    } catch (err) {
-      setError(err.message);
+    } catch (requestError) {
+      setError(requestError.message);
     }
   }
 
@@ -452,7 +464,7 @@ function DashboardView({ departments, authUser, onSignOut }) {
     <section className="admin-section">
       <div className="admin-heading">
         <div>
-          <p className="eyebrow">Enterprise IT Operations</p>
+          <p className="eyebrow">IT Operations</p>
           <h2>Support Dashboard</h2>
         </div>
         <div className="user-badge-group">
@@ -493,7 +505,7 @@ function DashboardView({ departments, authUser, onSignOut }) {
           Department
           <select value={filters.departmentId} onChange={(e) => updateFilter("departmentId", e.target.value)}>
             <option value="">All Departments</option>
-            {departments.map((dept) => (
+            {depts.map((dept) => (
               <option key={dept.id} value={dept.id}>{dept.name}</option>
             ))}
           </select>
@@ -609,14 +621,18 @@ function DashboardView({ departments, authUser, onSignOut }) {
 
 export default function App() {
   const [view, setView] = useState("submit");
-  const [departments, setDepartments] = useState([]);
+  const [departments, setDepartments] = useState(DEFAULT_DEPARTMENTS);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
     getDepartments()
-      .then((data) => setDepartments(data))
-      .catch((err) => console.error("Could not fetch departments", err));
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setDepartments(data);
+        }
+      })
+      .catch((err) => console.warn("Using default departments fallback:", err?.message || err));
   }, []);
 
   function handleLoginSuccess(user) {

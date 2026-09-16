@@ -1,4 +1,13 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? "/api";
+const DEFAULT_PROD_API = "https://helpdeskhub-api.onrender.com/api";
+
+const isLocalhost =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "0.0.0.0");
+
+const API_BASE =
+  import.meta.env.VITE_API_BASE || (isLocalhost ? "/api" : DEFAULT_PROD_API);
 
 function authorizationHeader(credentials) {
   if (!credentials) return {};
@@ -6,17 +15,33 @@ function authorizationHeader(credentials) {
 }
 
 async function request(path, options = {}, credentials) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      ...(options.body ? { "Content-Type": "application/json" } : {}),
-      ...authorizationHeader(credentials),
-      ...options.headers
-    }
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...authorizationHeader(credentials),
+        ...options.headers
+      }
+    });
+  } catch {
+    throw new Error(
+      "Cannot connect to the server. If this is a free-tier cloud deployment, the API may take 30-50 seconds to wake up."
+    );
+  }
 
-  const isJson = response.headers.get("content-type")?.includes("application/json");
-  const data = isJson ? await response.json() : null;
+  const contentType = response.headers.get("content-type") || "";
+  const isJson = contentType.includes("application/json");
+
+  let data = null;
+  if (isJson) {
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+  }
 
   if (!response.ok) {
     if (response.status === 401) {
@@ -24,9 +49,14 @@ async function request(path, options = {}, credentials) {
     }
     const message = data
       ? (typeof data === "object" ? Object.values(data).join(" ") : data)
-      : "The request could not be completed.";
+      : `Request failed with status ${response.status}`;
     throw new Error(message);
   }
+
+  if (!isJson) {
+    throw new Error("Backend service returned a non-JSON response.");
+  }
+
   return data;
 }
 
