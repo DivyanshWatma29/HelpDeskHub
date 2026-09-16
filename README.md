@@ -129,6 +129,25 @@ Open **`http://localhost:5173`** in your browser.
 
 ---
 
+## Deploy Live Online (Permanent Free Hosting)
+
+You can host this full-stack application online permanently with zero cost:
+
+### 1. Deploy to Render (Recommended for Spring Boot + React)
+1. Sign in to [Render.com](https://render.com) using your GitHub account (`DivyanshWatma29`).
+2. Click **New +** $\rightarrow$ **Blueprint**.
+3. Select your repository: `DivyanshWatma29/HelpDeskHub`.
+4. Render automatically reads `render.yaml`, spins up the **Spring Boot API** and the **React Frontend**, and assigns permanent HTTPS URLs (e.g. `https://helpdeskhub.onrender.com`).
+
+### 2. Deploy Frontend to Vercel (Alternative)
+1. Sign in to [Vercel.com](https://vercel.com) with GitHub.
+2. Click **Add New Project** $\rightarrow$ select `HelpDeskHub`.
+3. Set **Root Directory** to `frontend`.
+4. Add Environment Variable: `VITE_API_BASE=https://<your-render-backend-url>/api`.
+5. Click **Deploy** to get an instant live frontend URL (e.g. `https://helpdeskhub.vercel.app`).
+
+---
+
 ## Interview Preparation Guide (Capgemini Analyst Role)
 
 ### Your Role Script (What to tell the interviewer)
