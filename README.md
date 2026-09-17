@@ -1,312 +1,95 @@
-# SupportDesk
+# SupportDesk - Support Ticket Management System
 
-**Enterprise-style IT Service Desk Management System** built with Java 21, Spring Boot, React, JPA/Hibernate, Spring Security, and MySQL.
+SupportDesk is a simple academic project for managing support tickets. Users can raise a ticket for a problem, track it using a ticket number, and staff can update the ticket status.
 
-SupportDesk models an internal service-desk workflow: employees submit workplace issues, support agents manage the ticket queue, administrators control privileged operations, and ticket lifecycle changes are retained in an audit trail.
+## Live Demo
 
-**Live:** https://supportdesk-frontend.onrender.com  
-**API health:** https://supportdesk-api.onrender.com/api/health
+**[Click here to open the live demo](https://divyanshwatma29.github.io/SupportDesk/)**
 
-## 1. What the project does
+The live demo is hosted on GitHub Pages, so it stays available to show the project flow. It demonstrates raising, tracking, and updating tickets in the browser. The main project uses React, Spring Boot, and MySQL.
 
-SupportDesk is a full-stack ticket management application for internal IT/service operations.
+## Objective
 
-Employees can submit tickets with requester information, department, priority, title, and description; receive a unique ticket number; and track ticket status and history without staff access.
+The objective of this project is to create a simple help desk system where users can report issues and support staff can manage them until they are resolved.
 
-Support agents can view and filter the ticket queue, update status, add resolution notes, and inspect the complete audit timeline. Administrators have the additional permission to delete tickets.
+## Features
 
-The ticket workflow is:
+- Raise a support ticket with name, email, department, priority, and issue details
+- Generate a ticket number for tracking
+- Track a ticket using its ticket number
+- View all tickets in a staff dashboard
+- Change ticket status from Open to In Progress or Resolved
+- Add a short resolution note
+- Filter tickets by department, priority, or status
 
-`OPEN → IN_PROGRESS → RESOLVED`
+## Technologies Used
 
-## 2. Technology stack
+- React and Vite for the frontend
+- Java and Spring Boot for the backend
+- MySQL for data storage
+- Spring Data JPA for database operations
+- Spring Security for staff login
 
-| Layer | Technology | Role |
-|---|---|---|
-| Frontend | React 19 | UI and application state |
-| Frontend tooling | Vite | Development and production build |
-| Styling | CSS | Responsive interface |
-| Backend | Java 21 | Application language/runtime |
-| API framework | Spring Boot 3.5 | REST application |
-| Web/API | Spring Web | HTTP/JSON endpoints |
-| Persistence | Spring Data JPA + Hibernate | ORM and database access |
-| Security | Spring Security | Authentication and RBAC |
-| Password hashing | BCrypt | Password hashing |
-| Validation | Jakarta Bean Validation | Request validation |
-| Database | MySQL 8 | Relational persistence |
-| Development database | H2 | In-memory development profile |
-| Backend build | Maven | Dependencies/build lifecycle |
-| Frontend build | npm + Vite | Dependencies/build lifecycle |
-| Deployment | Render | Backend container + static frontend |
-| Version control | Git/GitHub | Source control |
+## Project Files
 
-## 3. Architecture
+| Folder/File | Use |
+| --- | --- |
+| `frontend/` | React user interface for raising, tracking, and managing tickets. |
+| `backend/` | Spring Boot API, ticket logic, and database connection. |
+| `database/schema.sql` | Creates the MySQL tables. |
+| `docs/index.html` | Always-live GitHub Pages demonstration. |
 
-```text
-┌───────────────────────────────┐
-│          React + Vite         │
-│ Employee Portal / Dashboard   │
-└───────────────┬───────────────┘
-                │ HTTP + JSON
-                │ REST API
-                ▼
-┌───────────────────────────────┐
-│       Spring Boot Backend     │
-│                               │
-│ Controller → Service → JPA    │
-│     ↓             ↓           │
-│ DTOs / Validation / Security  │
-└───────────────┬───────────────┘
-                │ Hibernate/JDBC
-                ▼
-┌───────────────────────────────┐
-│           MySQL 8             │
-│ Departments | Users           │
-│ Tickets     | Audit Logs      │
-└───────────────────────────────┘
-```
+## Database Tables
 
-The backend follows a layered design:
+| Table | Purpose |
+| --- | --- |
+| `departments` | Stores department names such as IT Support and HR. |
+| `users` | Stores requester and staff information. |
+| `tickets` | Stores ticket title, description, priority, status, and dates. |
+| `audit_logs` | Stores simple history when a ticket is created or updated. |
 
-- **Controllers** expose REST resources and handle HTTP input/output.
-- **Services** contain ticket workflow and business logic.
-- **Repositories** provide database access through Spring Data JPA.
-- **Entities/models** represent the relational domain.
-- **DTOs** keep API contracts separate from persistence entities.
-- **Security configuration** handles authentication and role-based authorization.
-- **Exception handling** converts application failures into API responses.
+## Ticket Flow
 
-## 4. Data flow
+1. A user fills in the Raise Ticket form.
+2. The system saves the ticket and generates a ticket number.
+3. The user can enter that ticket number in Track Ticket to check its status.
+4. A staff member opens the dashboard and changes the status when work starts or finishes.
+5. The user can track the same ticket again to see the update.
 
-### Ticket creation
-
-```text
-Employee form
-    ↓
-React
-    ↓ POST /api/tickets
-Spring Controller
-    ↓
-Bean Validation
-    ↓
-TicketService
-    ↓
-Create/find requester + validate department
-    ↓
-Ticket entity
-    ↓
-JPA/Hibernate
-    ↓
-MySQL tickets table
-    ↓
-CREATE audit entry
-    ↓
-JSON response with ticket number
-    ↓
-React confirmation
-```
-
-### Ticket update
-
-```text
-Agent/Admin
-    ↓ PUT /api/tickets/{id}
-Spring Security
-    ↓
-Controller → TicketService
-    ↓
-Validate/update ticket
-    ↓
-Persist changes
-    ↓
-Write audit_logs record
-    ↓
-Return updated ticket
-    ↓
-React refreshes dashboard
-```
-
-The frontend API client centralizes HTTP requests, JSON handling, authentication headers, error handling, and the configurable `VITE_API_BASE` URL.
-
-## 5. Database structure
-
-The database is normalized around four main tables:
-
-```text
-DEPARTMENTS  1 ──────── * USERS
-     │
-     └─────────────── * TICKETS * ──────── 1 USERS (requester)
-                              │
-                              └─────────── 1 USERS (agent)
-                              │
-                              └─────────── * AUDIT_LOGS
-```
-
-### departments
-Stores support/organizational departments. `name` and `code` are unique.
-
-### users
-Stores employee/requester records and roles. Email is unique and department membership is optional.
-
-### tickets
-Core transactional table containing ticket number, title, description, priority, status, department, requester, optional assignee, notes, and timestamps.
-
-### audit_logs
-Stores ticket lifecycle history: action, old status, new status, note, actor, and timestamp.
-
-The schema uses foreign keys with `RESTRICT`, `SET NULL`, and `CASCADE` according to relationship semantics. Indexes are defined for common ticket filtering and lookup fields including department, assignee, status, priority, and creation time.
-
-## 6. REST API
-
-| Method | Endpoint | Purpose | Access |
-|---|---|---|---|
-| POST | `/api/tickets` | Create ticket | Public |
-| GET | `/api/tickets` | List/filter tickets | Agent/Admin |
-| GET | `/api/tickets/{id}` | Ticket + audit details | Agent/Admin |
-| GET | `/api/tickets/track/{ticketNumber}` | Track ticket | Public |
-| PUT | `/api/tickets/{id}` | Update status/note | Agent/Admin |
-| DELETE | `/api/tickets/{id}` | Delete ticket | Admin |
-| GET | `/api/departments` | Department lookup | Public |
-| GET | `/api/dashboard/summary` | Dashboard aggregates | Agent/Admin |
-| GET | `/api/auth/me` | Validate staff authentication | Authenticated |
-| GET | `/api/health` | Health check | Public |
-
-## 7. Authentication and authorization
-
-Spring Security protects staff operations. Public users can submit and track tickets. Ticket management and dashboard operations require authentication.
-
-Roles:
-
-- `EMPLOYEE` — requester/domain role stored in the database.
-- `AGENT` — can manage tickets.
-- `ADMIN` — can manage tickets and perform privileged deletion operations.
-
-Staff authentication currently uses HTTP Basic authentication with BCrypt password hashing. Staff credentials are configurable through application properties/environment variables rather than being embedded in the security configuration.
-
-For a production deployment, credentials should be managed exclusively through the hosting provider's secret/environment management.
-
-## 8. Algorithms, models, and engineering mechanisms
-
-This is **not an ML project** and intentionally has no trained machine-learning model. It is a relational business application where deterministic workflow rules and indexed database queries are appropriate.
-
-Important mechanisms:
-
-1. **3NF relational normalization** — separates departments, users, tickets, and audit records to reduce duplication.
-2. **B-Tree database indexes** — accelerate common filtering and lookup operations.
-3. **REST routing** — maps HTTP methods/resources to controller operations.
-4. **Role-Based Access Control (RBAC)** — restricts operations according to authenticated role.
-5. **Ticket state machine/workflow** — operational states are constrained to `OPEN`, `IN_PROGRESS`, and `RESOLVED`.
-6. **Audit logging** — records lifecycle changes so ticket history can be reconstructed.
-7. **DTO-based API contracts** — avoids exposing persistence entities directly through the API.
-
-## 9. Testing and evaluation
-
-The repository now includes CI build validation for both backend and frontend.
-
-### Automated CI
-
-On pushes and pull requests to `main`:
-
-- Backend runs `mvn test` on Java 21.
-- Frontend runs `npm install` and `npm run build` on Node.js 20.
-
-### Functional evaluation
-
-| Area | Test/evaluation |
-|---|---|
-| Build | Maven test/build + Vite production build |
-| API | REST requests through Postman/curl |
-| Authentication | Valid and invalid staff credentials |
-| Authorization | Agent vs Admin permission checks |
-| Validation | Missing/invalid ticket fields |
-| Database integrity | Foreign keys, unique constraints, indexes |
-| Workflow | OPEN → IN_PROGRESS → RESOLVED |
-| Auditability | Verify lifecycle actions create audit records |
-| Filtering | Department/status/priority combinations |
-| Deployment | `/api/health` + frontend smoke test |
-
-Dedicated JUnit/Mockito and frontend component test coverage should be expanded next; do not claim a test-coverage percentage until those tests exist.
-
-## 10. Local development
-
-### Requirements
-
-- Java 21
-- Maven 3.9+
-- Node.js 18+
-- npm
-- MySQL 8 for the production-like profile
-
-H2 is available through the development profile for an offline/local backend run.
+## How to Run Locally
 
 ### Backend
 
-```bash
+Requirements: Java 21 and Maven.
+
+```powershell
 cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-Backend: `http://localhost:8080`
+The backend starts at `http://localhost:8080` using the H2 development database.
 
 ### Frontend
 
-```bash
+Requirements: Node.js and npm.
+
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-Frontend: `http://localhost:5173`
+Open `http://localhost:5173` in a browser.
 
-To point the frontend at a custom API, create `frontend/.env.local`:
+### MySQL Database
 
-```env
-VITE_API_BASE=http://localhost:8080/api
-```
+For MySQL, run `database/schema.sql` in MySQL Workbench. Then set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` before starting the backend without the `dev` profile.
 
-## 11. Project structure
+## Points to Explain in Viva
 
-```text
-SupportDesk/
-├── .github/workflows/ci.yml
-├── backend/
-│   ├── src/main/java/com/supportdesk/
-│   │   ├── config/
-│   │   ├── controller/
-│   │   ├── dto/
-│   │   ├── exception/
-│   │   ├── model/
-│   │   ├── repository/
-│   │   └── service/
-│   ├── Dockerfile
-│   └── pom.xml
-├── database/
-│   └── schema.sql
-├── frontend/
-│   ├── src/
-│   └── package.json
-├── render.yaml
-└── README.md
-```
-
-## 12. Resume-ready description
-
-**SupportDesk — Enterprise IT Service Desk Management System**
-
-Built a full-stack IT service desk platform using **Java 21, Spring Boot, React, JPA/Hibernate, Spring Security, and MySQL**, implementing role-based ticket management, filterable ticket queues, public ticket tracking, normalized relational data modeling, and lifecycle audit logging. Designed RESTful APIs and a 3NF database with indexed ticket fields and referential integrity constraints, with separate frontend/backend deployment.
-
-## 13. Recommended next upgrades
-
-- Add JUnit/Mockito unit tests for `TicketService`.
-- Add Spring Boot integration tests for public/protected endpoints.
-- Add frontend tests with Vitest and React Testing Library.
-- Add API smoke tests to CI.
-- Add pagination for large ticket queues.
-- Add Flyway/Liquibase database migrations.
-- Add structured logging and request correlation IDs.
-- Add Docker Compose for local MySQL + backend.
-- Replace HTTP Basic with a production-oriented authentication flow when the application moves beyond a portfolio/demo deployment.
-
-## License
-
-Portfolio/academic project.
+- React is used to make the forms and dashboard interactive.
+- Spring Boot provides REST API endpoints between the frontend and database.
+- MySQL stores tickets permanently in tables.
+- Each ticket has a unique ticket number so a user can track it.
+- Ticket status shows whether work is Open, In Progress, or Resolved.
+- The audit log keeps a simple record of ticket updates.

@@ -16,11 +16,11 @@ const priorities = ["LOW", "MEDIUM", "HIGH"];
 const statuses = ["OPEN", "IN_PROGRESS", "RESOLVED"];
 
 const DEFAULT_DEPARTMENTS = [
-  { id: 1, name: "IT Operations & Infrastructure", code: "IT-OPS" },
-  { id: 2, name: "HR Operations", code: "HR-OPS" },
-  { id: 3, name: "Finance IT Systems", code: "FIN-IT" },
-  { id: 4, name: "Facilities Management", code: "FAC-MGT" },
-  { id: 5, name: "Access & Information Security", code: "SEC-OPS" }
+  { id: 1, name: "IT Support", code: "IT" },
+  { id: 2, name: "Human Resources", code: "HR" },
+  { id: 3, name: "Finance", code: "FIN" },
+  { id: 4, name: "Facilities", code: "FAC" },
+  { id: 5, name: "Security", code: "SEC" }
 ];
 
 function readable(value) {
@@ -89,9 +89,9 @@ function TicketForm({ departments = DEFAULT_DEPARTMENTS }) {
       <div className="intro-card">
         <p className="eyebrow">Service Desk</p>
         <h2>Report an IT or Workplace Issue</h2>
-        <p>Submit a support request to IT Support, HR Operations, Finance IT, Facilities, or Security teams.</p>
+        <p>Fill in this form to report a problem to the correct support team.</p>
         <div className="support-note">
-          <strong>3NF Relational System:</strong> Tickets are linked to normalized department and requester entities with automated audit logging.
+          <strong>Project note:</strong> Your ticket is saved with its department, priority, and current status.
         </div>
       </div>
 
@@ -208,7 +208,7 @@ function TrackTicketTab() {
       <div className="track-header">
         <p className="eyebrow">Employee Portal</p>
         <h2>Track Your Support Ticket</h2>
-        <p className="muted">Enter your ticket number to view real-time resolution status and its audit timeline.</p>
+        <p className="muted">Enter your ticket number to check its current status and update history.</p>
       </div>
 
       <form className="card track-form" onSubmit={handleSearch}>
@@ -251,7 +251,7 @@ function TrackTicketTab() {
           </div>
 
           <div className="timeline-section">
-            <h4>Audit Trail & Lifecycle Timeline</h4>
+            <h4>Ticket Update History</h4>
             <div className="timeline">
               {detail.timeline.map((log) => (
                 <div key={log.id} className="timeline-item">
@@ -318,7 +318,7 @@ function LoginModal({ onClose, onLoginSuccess }) {
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
         <p className="muted" style={{ margin: "4px 0 16px" }}>
-          Sign in to access the Support Dashboard, manage tickets, and log audit notes.
+          Sign in to open the dashboard and update tickets.
         </p>
 
         <div className="demo-roles">
@@ -465,7 +465,7 @@ function DashboardView({ departments = DEFAULT_DEPARTMENTS, authUser, onSignOut 
     <section className="admin-section">
       <div className="admin-heading">
         <div>
-          <p className="eyebrow">IT Operations</p>
+          <p className="eyebrow">Support Staff</p>
           <h2>Support Dashboard</h2>
         </div>
         <div className="user-badge-group">
@@ -490,7 +490,7 @@ function DashboardView({ departments = DEFAULT_DEPARTMENTS, authUser, onSignOut 
 
       {summary?.ticketsByDepartment && (
         <div className="card department-workload">
-          <h4>Tickets by Department (Workload Distribution)</h4>
+          <h4>Tickets by Department</h4>
           <div className="dept-tags">
             {Object.entries(summary.ticketsByDepartment).map(([name, count]) => (
               <span key={name} className="dept-tag">
@@ -552,7 +552,7 @@ function DashboardView({ departments = DEFAULT_DEPARTMENTS, authUser, onSignOut 
                 </p>
                 <p>{ticket.description}</p>
                 <button className="text-link" onClick={() => showAuditTimeline(ticket.id)}>
-                  View Audit History
+                  View Ticket History
                 </button>
               </div>
 
@@ -590,7 +590,7 @@ function DashboardView({ departments = DEFAULT_DEPARTMENTS, authUser, onSignOut 
         <div className="modal-overlay" onClick={() => setActiveTimeline(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Audit History: {activeTimeline.ticket.ticketNumber}</h3>
+              <h3>Ticket History: {activeTimeline.ticket.ticketNumber}</h3>
               <button className="close-btn" onClick={() => setActiveTimeline(null)}>&times;</button>
             </div>
             <p className="muted">{activeTimeline.ticket.title} ({activeTimeline.ticket.departmentName})</p>
@@ -672,10 +672,10 @@ export default function App() {
     <main>
       <header className="topbar">
         <div className="brand">
-          <span>H</span>
+          <span>S</span>
           <div>
             <strong>SupportDesk</strong>
-            <small>IT Service Desk Management</small>
+            <small>Student Support Ticket System</small>
           </div>
         </div>
 
@@ -703,10 +703,10 @@ export default function App() {
         </nav>
 
         <div className="topbar-actions">
-          <div className="connection-badge" title="Live connection to Spring Boot backend & relational database">
+          <div className="connection-badge" title="Backend connection status">
             <span className={`status-dot ${apiStatus}`} />
             <span>
-              {apiStatus === "connected" && "System Online"}
+              {apiStatus === "connected" && "Online"}
               {apiStatus === "connecting" && "Connecting..."}
               {apiStatus === "offline" && "Reconnecting..."}
             </span>
