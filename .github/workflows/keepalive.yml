@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Ping Backend API
         run: |
-          curl -f https://supportdesk-api.onrender.com/api/health || echo "Failed to reach API"
+          curl -f https://supportdesk-api-3evm.onrender.com/api/health || echo "Failed to reach API"

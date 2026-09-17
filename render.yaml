@@ -23,7 +23,7 @@ services:
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_BASE
-        value: https://supportdesk-api.onrender.com/api
+        value: https://supportdesk-api-3evm.onrender.com/api
     routes:
       - type: rewrite
         source: /*
