@@ -33,7 +33,7 @@ SELECT
 FROM audit_logs a
 INNER JOIN tickets t ON a.ticket_id = t.id
 LEFT JOIN users u ON a.changed_by_id = u.id
-WHERE t.ticket_number = 'HD-00001'
+WHERE t.ticket_number = 'SD-00001'
 ORDER BY a.created_at ASC;
 
 -- 3. Department Workload & Resolution Metrics (GROUP BY + Conditional Aggregation)

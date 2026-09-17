@@ -70,7 +70,7 @@ public class SecurityConfig {
 
     @Bean
     CorsConfigurationSource corsConfigurationSource(
-            @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173,https://*.onrender.com,https://*.vercel.app}") String allowedOrigins) {
+            @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173,https://*.onrender.com,https://*.vercel.app,https://*.github.io}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)

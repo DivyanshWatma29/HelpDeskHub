@@ -63,7 +63,7 @@ public class TicketService {
         ticket.setRequester(requester);
 
         Ticket savedTicket = ticketRepository.save(ticket);
-        savedTicket.setTicketNumber("HD-%05d".formatted(savedTicket.getId()));
+        savedTicket.setTicketNumber("SD-%05d".formatted(savedTicket.getId()));
         Ticket persistedTicket = ticketRepository.save(savedTicket);
 
         AuditLog initialLog = new AuditLog(
