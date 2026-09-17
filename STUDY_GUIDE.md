@@ -1,14 +1,14 @@
-# HelpDeskHub — Technical Mastery & Interview Study Guide
+# SupportDesk — Technical Mastery & Interview Study Guide
 
-> 📄 **PDF Version Generated**: You can open and print [`HelpDeskHub_Technical_Study_Guide.pdf`](file:///C:/Users/ishan/Capegemini/HelpDeskHub/HelpDeskHub_Technical_Study_Guide.pdf) in this folder.  
-> 🌐 **Live Demo**: [https://helpdeskhub-frontend.onrender.com](https://helpdeskhub-frontend.onrender.com)  
-> 📁 **GitHub Repository**: [https://github.com/DivyanshWatma29/HelpDeskHub](https://github.com/DivyanshWatma29/HelpDeskHub)
+> 📄 **PDF Version Generated**: You can open and print [`SupportDesk_Technical_Study_Guide.pdf`](file:///C:/Users/ishan/Capegemini/SupportDesk/SupportDesk_Technical_Study_Guide.pdf) in this folder.  
+> 🌐 **Live Demo**: [https://supportdesk-frontend.onrender.com](https://supportdesk-frontend.onrender.com)  
+> 📁 **GitHub Repository**: [https://github.com/DivyanshWatma29/SupportDesk](https://github.com/DivyanshWatma29/SupportDesk)
 
 ---
 
 ## What You Built (Quick Overview)
 
-HelpDeskHub is an IT Service Desk application built with:
+SupportDesk is an IT Service Desk application built with:
 - **Relational Database (3NF Schema)**: 4 normalized tables (`departments`, `users`, `tickets`, `audit_logs`) with foreign key constraints and B-Tree indexes.
 - **Spring Boot 3 & Java 21 Backend**: 8 RESTful endpoints, DTO pattern with Java Records, Spring Data JPA / Hibernate ORM.
 - **Spring Security 6**: Public ticket raising/tracking, BCrypt hashed HTTP Basic Authentication, and Role-Based Access Control (`ADMIN` vs `AGENT`).
@@ -19,11 +19,11 @@ HelpDeskHub is an IT Service Desk application built with:
 
 ## 1. Database Design, 3NF Normalization & SQL Indexing
 
-### Core Concepts in HelpDeskHub
+### Core Concepts in SupportDesk
 - **1NF**: Atomic values in all columns, no repeating groups.
 - **2NF**: In 1NF + no partial functional dependencies (all non-key attributes depend on the entire primary key).
 - **3NF**: In 2NF + no transitive functional dependencies (non-key attributes depend **only** on the primary key, never on other non-key attributes).
-  - *Example in HelpDeskHub*: Instead of storing `department_name` and `department_code` inside the `tickets` table, we store `department_id` referencing the `departments` table.
+  - *Example in SupportDesk*: Instead of storing `department_name` and `department_code` inside the `tickets` table, we store `department_id` referencing the `departments` table.
 - **B-Tree Indexes**: Placed on `department_id`, `assigned_to`, `status`, `priority`, and `created_at` to provide $O(\log N)$ search speed and avoid full-table scans.
 - **Audit Logs Table**: Stores every lifecycle change (`CREATED`, `STATUS_UPDATED`, `NOTE_UPDATED`) as an immutable time-stamped record.
 
@@ -47,7 +47,7 @@ HelpDeskHub is an IT Service Desk application built with:
 
 ## 2. Spring Boot 3 & Spring Data JPA Architecture
 
-### Core Concepts in HelpDeskHub
+### Core Concepts in SupportDesk
 - **Layered Architecture**: Controller (`@RestController`) $\rightarrow$ Service (`@Service`) $\rightarrow$ Repository (`@Repository` extending `JpaRepository`) $\rightarrow$ Database.
 - **DTO Pattern with Java Records**: `CreateTicketRequest`, `TicketResponse`, and `AuditLogResponse` are immutable Java `record` classes that decouple the internal JPA database model from public HTTP APIs.
 - **Validation**: Declarative payload validation using `jakarta.validation.constraints` (`@NotBlank`, `@Email`, `@Size`, `@NotNull`).
@@ -70,7 +70,7 @@ HelpDeskHub is an IT Service Desk application built with:
 
 ## 3. Spring Security 6 & Role-Based Access Control (RBAC)
 
-### Core Concepts in HelpDeskHub
+### Core Concepts in SupportDesk
 - **`SecurityFilterChain`**: Configured via modern lambda DSL.
 - **CORS (Cross-Origin Resource Sharing)**: Handling browser preflight `OPTIONS` requests, configuring `setAllowedOriginPatterns`, and setting `maxAge(3600)` for preflight caching.
 - **Authentication**: HTTP Basic Auth with `BCryptPasswordEncoder` (adaptive work factor hashing).
@@ -92,7 +92,7 @@ HelpDeskHub is an IT Service Desk application built with:
 
 ## 4. React 19 Frontend & Vite Single Page Application
 
-### Core Concepts in HelpDeskHub
+### Core Concepts in SupportDesk
 - **Hooks**: `useState` for ticket drafts and view state; `useEffect` for data fetching and real-time backend health polling.
 - **Error Boundaries**: Class component wrapping `<App />` with `componentDidCatch` and `getDerivedStateFromError` to catch runtime errors and display a recovery card instead of a blank white screen.
 - **Relative Asset Base**: `base: './'` in `vite.config.js` to ensure production builds run on any domain, CDN, or subpath without 404 asset failures.
@@ -109,7 +109,7 @@ HelpDeskHub is an IT Service Desk application built with:
 
 ## 5. Docker Containerization & Cloud Deployment
 
-### Core Concepts in HelpDeskHub
+### Core Concepts in SupportDesk
 - **Multi-Stage Build**:
   - **Stage 1 (Build)**: `FROM maven:3.9.9-eclipse-temurin-21` compiles the JAR.
   - **Stage 2 (Runtime)**: `FROM eclipse-temurin:21-jre` runs `app.jar` on a lean alpine image.
@@ -128,7 +128,7 @@ HelpDeskHub is an IT Service Desk application built with:
 
 ## 6. 60-Second Interview Elevator Pitch (Memorize This!)
 
-> *"I developed **HelpDeskHub**, a full-stack IT service desk management system built with Spring Boot 3, Java 21, and React 19.  
+> *"I developed **SupportDesk**, a full-stack IT service desk management system built with Spring Boot 3, Java 21, and React 19.  
 >  
 > On the data layer, I designed a normalized **3NF relational schema** across `departments`, `users`, `tickets`, and `audit_logs` to eliminate data redundancy and preserve referential integrity. To optimize search performance under high ticket volume, I implemented **B-Tree indexes** on foreign keys and lookup columns like status and priority.  
 >  
@@ -142,7 +142,7 @@ HelpDeskHub is an IT Service Desk application built with:
 
 | Day | Focus Topic | Key Milestone |
 | :---: | :--- | :--- |
-| **Day 1** | **DBMS Normalization** (Gate Smashers) | Explain why HelpDeskHub splits `departments` and `tickets` |
+| **Day 1** | **DBMS Normalization** (Gate Smashers) | Explain why SupportDesk splits `departments` and `tickets` |
 | **Day 2** | **Database Indexing** (Hussein Nasser) | Explain how B-Tree indexes prevent full-table scans |
 | **Day 3** | **Spring Boot MVC & JPA** (Durgesh / Java Guides) | Explain the Controller $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ DB flow |
 | **Day 4** | **Spring Security 6 & CORS** (Telusko / Durgesh) | Explain preflight `OPTIONS` and role separation |

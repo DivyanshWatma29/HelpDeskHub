@@ -1,4 +1,4 @@
-const DEFAULT_PROD_API = "https://helpdeskhub-api.onrender.com/api";
+const DEFAULT_PROD_API = "https://supportdesk-api.onrender.com/api";
 
 const isLocalhost =
   typeof window !== "undefined" &&

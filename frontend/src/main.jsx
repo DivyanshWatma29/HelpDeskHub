@@ -38,7 +38,7 @@ class ErrorBoundary extends Component {
             boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
             textAlign: "center"
           }}>
-            <h2 style={{ margin: "0 0 12px", color: "#0f172a" }}>HelpDeskHub</h2>
+            <h2 style={{ margin: "0 0 12px", color: "#0f172a" }}>SupportDesk</h2>
             <p style={{ color: "#64748b", margin: "0 0 20px" }}>
               An unexpected error occurred while loading the view.
             </p>

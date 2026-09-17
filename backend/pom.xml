@@ -11,11 +11,11 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.helpdeskhub</groupId>
-    <artifactId>helpdesk-backend</artifactId>
+    <groupId>com.supportdesk</groupId>
+    <artifactId>supportdesk-backend</artifactId>
     <version>1.0.0</version>
-    <name>helpdesk-backend</name>
-    <description>REST API for HelpDeskHub</description>
+    <name>supportdesk-backend</name>
+    <description>REST API for SupportDesk</description>
 
     <properties>
         <java.version>21</java.version>

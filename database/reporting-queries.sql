@@ -1,5 +1,5 @@
 -- =========================================================================
--- HelpDeskHub: SQL Reporting & Analytical Queries
+-- SupportDesk: SQL Reporting & Analytical Queries
 -- Useful for operational dashboards and Capgemini Analyst interview practice
 -- =========================================================================
 

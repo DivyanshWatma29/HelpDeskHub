@@ -674,7 +674,7 @@ export default function App() {
         <div className="brand">
           <span>H</span>
           <div>
-            <strong>HelpDeskHub</strong>
+            <strong>SupportDesk</strong>
             <small>IT Service Desk Management</small>
           </div>
         </div>

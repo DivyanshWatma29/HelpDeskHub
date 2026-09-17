@@ -1,15 +1,15 @@
-# HelpDeskHub
+# SupportDesk
 
 **Enterprise-style IT Service Desk Management System** built with Java 21, Spring Boot, React, JPA/Hibernate, Spring Security, and MySQL.
 
-HelpDeskHub models an internal service-desk workflow: employees submit workplace issues, support agents manage the ticket queue, administrators control privileged operations, and ticket lifecycle changes are retained in an audit trail.
+SupportDesk models an internal service-desk workflow: employees submit workplace issues, support agents manage the ticket queue, administrators control privileged operations, and ticket lifecycle changes are retained in an audit trail.
 
-**Live:** https://helpdeskhub-frontend.onrender.com  
-**API health:** https://helpdeskhub-api.onrender.com/api/health
+**Live:** https://supportdesk-frontend.onrender.com  
+**API health:** https://supportdesk-api.onrender.com/api/health
 
 ## 1. What the project does
 
-HelpDeskHub is a full-stack ticket management application for internal IT/service operations.
+SupportDesk is a full-stack ticket management application for internal IT/service operations.
 
 Employees can submit tickets with requester information, department, priority, title, and description; receive a unique ticket number; and track ticket status and history without staff access.
 
@@ -267,10 +267,10 @@ VITE_API_BASE=http://localhost:8080/api
 ## 11. Project structure
 
 ```text
-HelpDeskHub/
+SupportDesk/
 ├── .github/workflows/ci.yml
 ├── backend/
-│   ├── src/main/java/com/helpdeskhub/
+│   ├── src/main/java/com/supportdesk/
 │   │   ├── config/
 │   │   ├── controller/
 │   │   ├── dto/
@@ -291,7 +291,7 @@ HelpDeskHub/
 
 ## 12. Resume-ready description
 
-**HelpDeskHub — Enterprise IT Service Desk Management System**
+**SupportDesk — Enterprise IT Service Desk Management System**
 
 Built a full-stack IT service desk platform using **Java 21, Spring Boot, React, JPA/Hibernate, Spring Security, and MySQL**, implementing role-based ticket management, filterable ticket queues, public ticket tracking, normalized relational data modeling, and lifecycle audit logging. Designed RESTful APIs and a 3NF database with indexed ticket fields and referential integrity constraints, with separate frontend/backend deployment.
 

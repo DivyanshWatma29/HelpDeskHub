@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS helpdesk_hub
+CREATE DATABASE IF NOT EXISTS supportdesk
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE helpdesk_hub;
+USE supportdesk;
 
 -- 1. Departments table (eliminates department redundancy in tickets - 3NF)
 CREATE TABLE IF NOT EXISTS departments (

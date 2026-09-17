@@ -1,7 +1,7 @@
 services:
   # Backend Spring Boot Web Service
   - type: web
-    name: helpdeskhub-api
+    name: supportdesk-api
     runtime: docker
     dockerContext: backend
     dockerfilePath: backend/Dockerfile
@@ -17,13 +17,13 @@ services:
 
   # Frontend React/Vite Static Site (Static sites on Render are free by default and do not accept a plan property)
   - type: web
-    name: helpdeskhub-frontend
+    name: supportdesk-frontend
     runtime: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
       - key: VITE_API_BASE
-        value: https://helpdeskhub-api.onrender.com/api
+        value: https://supportdesk-api.onrender.com/api
     routes:
       - type: rewrite
         source: /*
