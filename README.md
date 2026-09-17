@@ -64,10 +64,12 @@ Requirements: Java 21 and Maven.
 
 ```powershell
 cd backend
+$env:ADMIN_PASSWORD = "choose_an_admin_password"
+$env:AGENT_PASSWORD = "choose_an_agent_password"
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-The backend starts at `http://localhost:8080` using the H2 development database.
+The backend starts at `http://localhost:8080` using the H2 development database. Use username `admin` or `agent` with the password you set above to open the staff dashboard.
 
 ### Frontend
 

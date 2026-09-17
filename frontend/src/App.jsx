@@ -279,7 +279,7 @@ function TrackTicketTab() {
 }
 
 function LoginModal({ onClose, onLoginSuccess }) {
-  const [form, setForm] = useState({ username: "admin", password: "ChangeMe123!" });
+  const [form, setForm] = useState({ username: "admin", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -304,9 +304,9 @@ function LoginModal({ onClose, onLoginSuccess }) {
 
   function selectDemoAccount(role) {
     if (role === "admin") {
-      setForm({ username: "admin", password: "ChangeMe123!" });
+      setForm({ username: "admin", password: "" });
     } else {
-      setForm({ username: "agent", password: "Agent123!" });
+      setForm({ username: "agent", password: "" });
     }
   }
 
@@ -318,7 +318,7 @@ function LoginModal({ onClose, onLoginSuccess }) {
           <button className="close-btn" onClick={onClose}>&times;</button>
         </div>
         <p className="muted" style={{ margin: "4px 0 16px" }}>
-          Sign in to open the dashboard and update tickets.
+          Select a role and enter the password configured for your local project.
         </p>
 
         <div className="demo-roles">
@@ -355,6 +355,7 @@ function LoginModal({ onClose, onLoginSuccess }) {
               type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
+              placeholder="Configured password"
               required
             />
           </label>
