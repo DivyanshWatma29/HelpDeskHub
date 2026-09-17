@@ -2,13 +2,11 @@
 
 SupportDesk is a simple academic project for managing support tickets. Users can raise a ticket for a problem, track it using a ticket number, and staff can update the ticket status.
 
-## Live Demos
+## Live Demo
 
-**[Primary Full-Stack Demo (Render)](https://supportdesk-frontend.onrender.com/)**
+**[Interactive Demo (GitHub Pages)](https://divyanshwatma29.github.io/SupportDesk/)**
 
-**[Frontend-Only Static Demo (GitHub Pages)](https://divyanshwatma29.github.io/SupportDesk/)**
-
-The live demo is hosted on Render, so it stays available to show the project flow. It demonstrates raising, tracking, and updating tickets in the browser. The main project uses React, Spring Boot, and MySQL.
+The live demo is hosted on GitHub Pages to show the project flow. It demonstrates raising, tracking, and updating tickets in the browser. The main project uses React, Spring Boot, and MySQL.
 
 ## Objective
 
