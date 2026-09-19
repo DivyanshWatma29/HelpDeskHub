@@ -1,0 +1,35 @@
+name: Diagnose Cognitive Lab goapk
+on:
+  workflow_dispatch:
+  push:
+    branches: [cognitive-assessment-lab-build]
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download goapk
+        run: curl -L --fail https://github.com/zapstore/goapk/raw/main/goapk -o goapk && chmod +x goapk
+      - name: Prepare
+        run: |
+          cat > cognitive-assessment-lab/app/src/main/assets/manifest.json <<'EOF'
+          {"name":"Cognitive Assessment Lab","short_name":"Cognitive Lab","start_url":"index.html","display":"standalone","orientation":"portrait","background_color":"#07111f","theme_color":"#07111f"}
+          EOF
+      - name: Build with log
+        run: |
+          set +e
+          ./goapk version 2>&1 | tee version.log
+          ./goapk build -s cognitive-assessment-lab/app/src/main/assets --package com.cognitiveassessmentlab --name "Cognitive Assessment Lab" --version-name "3.0" --version-code 3 cognitive-assessment-lab.apk 2>&1 | tee build.log
+          rc=${PIPESTATUS[0]}
+          echo "exit_code=$rc" | tee -a build.log
+          exit 0
+      - name: Upload diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cognitive-lab-goapk-diagnostic
+          path: |
+            build.log
+            version.log
+            cognitive-assessment-lab.apk
+          if-no-files-found: warn
