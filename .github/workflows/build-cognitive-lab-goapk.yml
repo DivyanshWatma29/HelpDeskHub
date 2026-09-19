@@ -1,0 +1,27 @@
+name: Build Cognitive Lab APK (goapk)
+on:
+  push:
+    branches: [cognitive-assessment-lab-build]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download goapk
+        run: |
+          curl -L --fail https://github.com/zapstore/goapk/raw/main/goapk -o goapk
+          chmod +x goapk
+      - name: Add PWA manifest
+        run: |
+          cat > cognitive-assessment-lab/app/src/main/assets/manifest.json <<'EOF'
+          {"name":"Cognitive Assessment Lab","short_name":"Cognitive Lab","start_url":"index.html","display":"standalone","orientation":"portrait","background_color":"#07111f","theme_color":"#07111f"}
+          EOF
+      - name: Build APK without Android SDK
+        run: |
+          ./goapk build -s cognitive-assessment-lab/app/src/main/assets --package com.cognitiveassessmentlab --name "Cognitive Assessment Lab" --version-name "3.0" --version-code 3 cognitive-assessment-lab.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: cognitive-assessment-lab-goapk
+          path: cognitive-assessment-lab.apk
